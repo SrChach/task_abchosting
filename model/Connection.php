@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/../config/env.php';
+require_once dirname(__FILE__) . '/Message.php';
 
 class Connection {
 
@@ -26,10 +27,7 @@ class Connection {
 
 	public function fetchAll ($query, $params = null) {
 		$stmt = $this->conn->prepare($query);
-		if ($params == null)
-			$stmt->execute();
-		else
-			$stmt->execute($params);
+		$this->execute_checking_params($stmt, $params);
 
 		$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 		return $res;
@@ -37,11 +35,7 @@ class Connection {
 
 	public function fetchOne ($query, $params = null) {
 		$stmt = $this->conn->prepare($query);
-
-		if ($params == null)
-			$stmt->execute();
-		else
-			$stmt->execute($params);
+		$this->execute_checking_params($stmt, $params);
 
 		$res = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -55,7 +49,7 @@ class Connection {
 
 		if ($affected !== false)
 			return $affected;
-		die ($stmt->errorInfo()[2]);
+		Message::error_message( $stmt->errorInfo()[2] );
 	}
 
 	public function execReturnId ($query) {
@@ -68,11 +62,7 @@ class Connection {
 
 	public function execute ($query, $params = null) {
 		$stmt = $this->conn->prepare($query);
-
-		if ($params == null)
-			$stmt->execute();
-		else
-			$stmt->execute($params);
+		$this->execute_checking_params($stmt, $params);
 
 		return $stmt->rowCount();
 	}
@@ -83,6 +73,13 @@ class Connection {
 		if($affected)
 			return $this->conn->lastInsertId();
 		return null;
+	}
+
+	private function execute_checking_params (&$stmt, $params = null) {
+		if ($params == null)
+			$stmt->execute();
+		else
+			$stmt->execute($params);
 	}
 
 }

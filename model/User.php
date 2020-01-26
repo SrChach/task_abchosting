@@ -1,6 +1,9 @@
 <?php
 
-session_start();
+if (session_status() == PHP_SESSION_NONE)
+    session_start();
+
+require_once dirname(__FILE__) . '/Message.php';
 
 class User {
 
@@ -11,7 +14,7 @@ class User {
     public function __construct ($id = null, $username = null, $pass = null) {
         global $_conn;
         if( !isset($_conn) )
-            die( json_encode(['error' => 'Cannot connect to database']) );
+            Message::error_message('Cannot connect to database');
 
         if ($id == null)
             $user = $this->start_session($username, $pass);
@@ -29,7 +32,7 @@ class User {
         $user = $_conn->fetchOne("SELECT * FROM user WHERE username=? AND pass=?", [$username, $pass]);
 
         if (!$user)
-            die( json_encode(['error' => 'User not found']) );
+            Message::error_message('User not found');
 
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
@@ -44,7 +47,7 @@ class User {
         $user = $_conn->fetchOne("SELECT id, username, cash FROM user WHERE id=?", [$id]);
 
         if (!$user)
-            die( json_encode(['error' => 'User not found']) );
+            Message::error_message('User not found');
 
         return $user;
     }
@@ -58,12 +61,12 @@ class User {
 
     public function extract_cash ($quantity = 0) {
         if ($quantity <= 0)
-            die( json_encode(['error' => 'Quantity must be numeric, and cannot be less than or equals 0']) );
+            Message::error_message('Quantity must be numeric, and cannot be less than or equals 0');
 
         global $_conn;
         $this->check_cash();
         if ($quantity > $this->cash)
-            die( json_encode(['error' => 'Insufficient cash', 'cash' => $this->cash]) );
+            Message::error_message("Insufficient cash. You have \${$this->cash}");
 
         $new_cash = $this->cash - $quantity;
         $affected = $_conn->execute('UPDATE user SET cash=? WHERE id=?', [$new_cash, $this->id]);
