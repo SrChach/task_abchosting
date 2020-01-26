@@ -1,8 +1,6 @@
 <?php
 
-namespace model\Connection;
-
-use \PDO;
+require_once dirname(__FILE__) . '/../config/env.php';
 
 class Connection {
 
@@ -10,7 +8,7 @@ class Connection {
 	public $host;
 	public $conn;
 
-	public function __construct($host = 'localhost', $port = '3306', $dbname, $user, $password) {
+	public function __construct($host = HOST, $port = PORT, $dbname = DBNAME, $user = USER, $password = PASS) {
 		if ( !isset($host, $port, $dbname, $user, $password) )
 			return [ 'error' => 'faltan parámetros' ];
 

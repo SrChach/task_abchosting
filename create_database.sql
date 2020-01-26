@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `ecommerce`.`user` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(25) NOT NULL,
   `pass` VARCHAR(50) NOT NULL,
-  `cash` DECIMAL(11,0) NOT NULL DEFAULT 100,
+  `cash` DECIMAL(11,2) NOT NULL DEFAULT 100,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `username_UNIQUE` (`username` ASC) VISIBLE);
 
@@ -58,7 +58,7 @@ INSERT INTO product (name, price) VALUES
 CREATE TABLE IF NOT EXISTS `ecommerce`.`transport_type` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  `price` DECIMAL(11,0) NOT NULL DEFAULT 0,
+  `price` DECIMAL(11,2) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`));
 
 INSERT INTO transport_type (name, price) VALUES
