@@ -22,7 +22,7 @@
 
 		case 'purchase':
 			if ( !isset($_SESSION['user_id']) )
-				Message::error_message('Session not started');
+				Message::error_message('Session not started', 1);
 
 			if(  !isset($_POST['transport_type_id']) )
 				Message::error_message('transport type is required');

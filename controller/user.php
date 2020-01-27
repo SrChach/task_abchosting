@@ -25,7 +25,7 @@ switch ($_GET['option']) {
 
 	case 'rest_cash':
 		if ( !isset($_SESSION['user_id']) )
-			Message::error_message('Session not started');
+			Message::error_message('Session not started', 1);
 
 		if ( !isset($_POST['quantity']) )
 			Message::error_message('Quantity to rest is required');
@@ -45,7 +45,7 @@ switch ($_GET['option']) {
 
 	case 'logout':
 		if ( !isset($_SESSION['user_id']) )
-			Message::error_message("Session doesn't exist");
+			Message::error_message("Session doesn't exist", 1);
 
 		session_destroy();
 		Message::successful_operation(true, 'Logout done');

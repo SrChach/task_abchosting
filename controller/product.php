@@ -22,7 +22,7 @@
 
         case 'rate':
             if( !isset($_SESSION['user_id']) )
-                Message::error_message('Session not started');
+                Message::error_message('Session not started', 1);
 
             if( !isset($_POST['product_id'], $_POST['rate']) )
                 Message::error_message('rate and product_id fields are required');

@@ -13,7 +13,7 @@ class Product {
         global $_conn;
 
         $products = $_conn->fetchAll(
-            "SELECT product.*, rate.rate_prom AS rate
+            "SELECT product.*, rate.rate_prom AS rate, 0 AS to_cart
                 FROM
                     product
                 LEFT JOIN
@@ -25,6 +25,13 @@ class Product {
                 ON product.id = rate.product_id"
         );
         return $products;
+    }
+
+    public function getProduct($product_id){
+        global $_conn;
+
+        $product = $_conn->fetchOne("SELECT * FROM product WHERE id=?", [$product_id]);
+        return $product;
     }
 
     private function is_rated ($user_id, $product_id) {

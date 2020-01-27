@@ -12,7 +12,7 @@
         Message::error_message('option is required');
 
     if(!isset($_SESSION['user_id']))
-        Message::error_message('Session not started');
+        Message::error_message('Session not started', 1);
 
     $_conn = new Connection();
 

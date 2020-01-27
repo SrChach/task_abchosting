@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="public/css/bootstrap.min.css">
+    <title>Ecommerce</title>
+</head>
+<body>
+    
+    <div id="app">
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+            <span class="navbar-brand">Ecommerce</span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="main_navbar">
+                <div class="navbar-nav">
+                    <a href="#" class="nav-item nav-link">Products</a>
+                    <a href="#" class="nav-item nav-link">My cart</a>
+                    <a href="#" class="nav-item nav-link">Pricing</a>
+                    <a href="#" class="nav-item nav-link" @click="logout()">Logout</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <product-table :products="products" @add_to_cart="add_to_cart"></product-table>
+                </div>
+                <div class="col-lg-6">
+                    <cart-table :my_cart="my_cart" @remove_from_cart="remove_from_cart"></cart-table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script>
+    <script src="public/js/vue.js"></script>
+    <script src="public/js/global-functions.js"></script>
+
+    <script src="public/vue-components/product-table.js"></script>
+    <script src="public/vue-components/cart-table.js"></script>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: function () {
+                return {
+                    products: [],
+                    my_cart: []
+                }
+            },
+            methods: {
+                get_products: function () {
+                    let this_2 = this
+                    $.get('controller/product.php?option=list', function (res) {
+                        if ( is_response_error(res) )
+                            return;
+                        this_2.products = res.data
+                    })
+                },
+                get_user_cart: function () {
+                    let this_2 = this
+                    $.get('controller/cart.php?option=list', function (res) {
+                        if ( is_response_error(res) )
+                            return;
+                        this_2.my_cart = res.data
+                    })
+                },
+                add_to_cart: function (product){
+                    let this_2 = this
+                    $.post(
+                        'controller/cart.php?option=add_product', 
+                        {
+                            product_id: product.product_id,
+                            quantity: product.quantity
+                        },
+                        function (res) {
+                            if ( is_response_error(res) )
+                                return;
+                            alert(res.message)
+                            if ( res.data == true )
+                                this_2.get_user_cart()
+                        }
+                    )
+                },
+                remove_from_cart: function (item) {
+                    let this_2 = this
+                    $.post(
+                        'controller/cart.php?option=remove_product', 
+                        {
+                            product_id: item.product_id,
+                            quantity: item.quantity
+                        },
+                        function (res) {
+                            if ( is_response_error(res) )
+                                return;
+                            alert(res.message)
+                            if ( res.data == true )
+                                this_2.get_user_cart()
+                        }
+                    )
+                },
+                logout () {
+                    // Call to the global logout within 'this' instance
+                    logout()
+                }
+            },
+            created: function () {
+                this.get_products()
+                this.get_user_cart()
+            } 
+        })
+    </script>
+    
+</body>
+</html>

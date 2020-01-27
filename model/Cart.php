@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/Message.php';
+require_once dirname(__FILE__) . '/Product.php';
 
 class Cart {
 
@@ -18,7 +19,7 @@ class Cart {
         global $_conn;
 
         $cart = $_conn->fetchAll("SELECT cart.id AS cart_id, product.id AS product_id, product.name AS product,
-                product.price AS single_price, cart.quantity, (cart.quantity * product.price) as total_price 
+                product.price AS single_price, cart.quantity, (cart.quantity * product.price) AS total_price  
             FROM
                 cart
             JOIN
@@ -41,6 +42,12 @@ class Cart {
 
         if($quantity < 1)
             Message::error_message('Quantity cannot be equals or less than 1');
+
+        $product_instance = new Product();
+        $product = $product_instance->getProduct($product_id);
+
+        if ($product == null)
+            Message::error_message("The selected product doesn't exists");
 
         $in_cart = $this->exists($product_id);
 
