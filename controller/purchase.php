@@ -19,7 +19,7 @@
 			$transport_types = $purchase->list_transport_types();
 			Message::successful_operation($transport_types);
 			break;
-		
+
 		case 'purchase':
 			if ( !isset($_SESSION['user_id']) )
 				Message::error_message('Session not started');
@@ -31,5 +31,9 @@
 			$transport_types = $purchase->purchase($_SESSION['user_id'], $_POST['transport_type_id']);
 			Message::successful_operation($transport_types);
 			break;
+
+		default:
+            Message::error_message('Method not available');
+            break;
 
 	}

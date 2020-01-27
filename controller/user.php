@@ -35,7 +35,7 @@ switch ($_GET['option']) {
 		$status = $user->extract_cash($_POST['quantity']);
 
 		if ($status == false)
-			Message::error_message('Something went wrong. Cannot extract the cash from user');    
+			Message::error_message('Something went wrong. Cannot extract the cash from user');
 
 		Message::successful_operation([
 			'status' => true,

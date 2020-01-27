@@ -39,7 +39,7 @@
         case 'remove_product':
             if(!isset($_SESSION['user_id']))
                 Message::error_message('Session not started');
-            
+
             if ( !isset($_POST['product_id'], $_POST['quantity']) )
                 Message::error_message('product_id and quantity are required fields');
 

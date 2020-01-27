@@ -51,7 +51,7 @@ class Purchase {
 		$transport_type = $this->get_transport_type($transport_type_id);
 		if( !$transport_type )
 			Message::error_message('Invalid transport type selected');
-		
+
 		$user = new User($user_id);
 		$cart = new Cart($user_id);
 
@@ -59,7 +59,7 @@ class Purchase {
 
 		if ( count($cart_list) == 0 )
 			Message::error_message('Nothing to buy');
-		
+
 		$cart_price = 0;
 		foreach ($cart_list as $key => $value)
 			$cart_price += $value['total_price'];
@@ -75,12 +75,12 @@ class Purchase {
 		// Easy to hunt-down failed transactions: Inserted into 'purchase' table without any item buyed
 		$purchase_id = $this->insert_purchase($user_id, $transport_type_id);
 
-		$status_extract = $user->extract_cash($total_price);		
+		$status_extract = $user->extract_cash($total_price);
 		if($status_extract === false)
 			Message::error_message("We could'nt subtract the money from your account");
 
 		$this->finish_purchase($purchase_id, $user_id);
-		
+
 		Message::successful_operation(
 			[
 				'buyed_items' => $cart_list,
