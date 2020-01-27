@@ -11,21 +11,19 @@
     if( !isset($_GET['option']) )
         Message::error_message('option is required');
 
+    if(!isset($_SESSION['user_id']))
+        Message::error_message('Session not started');
+
     $_conn = new Connection();
 
     switch ($_GET['option']) {
         case 'list':
-            if(!isset($_SESSION['user_id']))
-                Message::error_message('Session not started');
             $cart = new Cart($_SESSION['user_id']);
             $cart_list = $cart->list();
             Message::successful_operation($cart_list);
             break;
 
         case 'add_product':
-            if(!isset($_SESSION['user_id']))
-                Message::error_message('Session not started');
-            
             if ( !isset($_POST['product_id'], $_POST['quantity']) )
                 Message::error_message('product_id and quantity are required fields');
 
@@ -37,9 +35,6 @@
             break;
 
         case 'remove_product':
-            if(!isset($_SESSION['user_id']))
-                Message::error_message('Session not started');
-
             if ( !isset($_POST['product_id'], $_POST['quantity']) )
                 Message::error_message('product_id and quantity are required fields');
 
@@ -52,9 +47,6 @@
             break;
 
         case 'empty':
-            if(!isset($_SESSION['user_id']))
-                Message::error_message('Session not started');
-
             $cart = new Cart($_SESSION['user_id']);
             $status = $cart->empty();
             if($status === false) Message::error_message('Sonething went wrong');
