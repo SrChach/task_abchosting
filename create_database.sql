@@ -32,7 +32,9 @@ INSERT INTO user (username, pass) VALUES
   ('test', 'test'),
   ('test1', 'test'),
   ('test2', 'test'),
-  ('customer', 'test');
+  ('test3', 'test'),
+  ('test4', 'test'),
+  ('test5', 'test');
 
 
 -- -----------------------------------------------------
@@ -45,11 +47,11 @@ CREATE TABLE IF NOT EXISTS `ecommerce`.`product` (
   `image` VARCHAR(100) NULL,
   PRIMARY KEY (`id`));
 
-INSERT INTO product (name, price) VALUES
-  ('Apple', 0.3),
-  ('Beer', 2.0),
-  ('Water', 1.0),
-  ('Cheese', 3.74);
+INSERT INTO product (name, price, image) VALUES
+  ('Apple', 0.3, 'apple.jpg'),
+  ('Beer', 2.0, 'beer.jpg'),
+  ('Water', 1.0, 'water.jpg'),
+  ('Cheese', 3.74, 'cheese.jpeg');
 
 
 -- -----------------------------------------------------

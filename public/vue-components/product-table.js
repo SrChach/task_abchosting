@@ -18,6 +18,7 @@ Vue.component('product-table', {
                             <th>Product</th>
                             <th>Price</th>
                             <th>Rate</th>
+                            <th>Image</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -26,7 +27,11 @@ Vue.component('product-table', {
                             <th>{{ product.id }}</th>
                             <td>{{ product.name }}</td>
                             <td>{{ product.price }}</td>
-                            <td>{{ (product.rate == null) ? 'N/A' : product.rate}}</td>
+                            <td>{{ (product.rate == null) ? 'N/A' : product.rate + '/5'}}</td>
+                            <td>
+                                <img v-if="typeof(product.image) == 'string'" :src="'public/images/' + product.image" alt="Product" height="42" width="42">
+                                <span v-if="typeof(product.image) != 'string'">N/A</span>
+                            </td>
                             <td>
                                 <div class="input-group">
                                     <input class="form-control" placeholder="quantity" type="number" min="0" max="999" v-model.number="product.to_cart">
