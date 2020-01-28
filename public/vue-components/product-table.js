@@ -6,7 +6,7 @@ Vue.component('product-table', {
         products: { type: Array, default: function () { return []; } }
     },
     template: `
-        <div class='card mt-2'>
+        <div class='card mt-2 mb-4'>
             <div class="card-header text-center">
                 <h5>Products</h5>
             </div>
@@ -22,7 +22,7 @@ Vue.component('product-table', {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(product, id) in products">
+                        <tr v-if="products.length > 0" v-for="(product, id) in products">
                             <th>{{ product.id }}</th>
                             <td>{{ product.name }}</td>
                             <td>{{ product.price }}</td>
@@ -35,6 +35,9 @@ Vue.component('product-table', {
                                     </div>
                                 </div>
                             </td>
+                        </tr>
+                        <tr v-if="products.length == 0">
+                            <td colspan="5">There are no products to show</td>
                         </tr>
                     </tbody>
                 </table>

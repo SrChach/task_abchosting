@@ -12,26 +12,54 @@
     <div id="app">
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
             <span class="navbar-brand">Ecommerce</span>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main_navbar" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#main_navbar" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="main_navbar">
                 <div class="navbar-nav">
-                    <a href="#" class="nav-item nav-link">Products</a>
-                    <a href="#" class="nav-item nav-link">My cart</a>
-                    <a href="#" class="nav-item nav-link">Pricing</a>
+                    <span class="nav-item nav-link">User {{ username }}, you have: ${{ your_cash }}</span>
+                    <a href="#" class="nav-item nav-link">Rate products</a>
                     <a href="#" class="nav-item nav-link" @click="logout()">Logout</a>
                 </div>
             </div>
         </nav>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <product-table :products="products" @add_to_cart="add_to_cart"></product-table>
+        <div class="container-fluid">
+            <div v-if="is_showing_main" class="row">
+                <div v-if="!is_purchasing" class="col-lg-6">
+                    <product-table
+                        :products="products"
+                        @add_to_cart="add_to_cart"
+                    />
+                </div>
+                <div v-if="is_purchasing" class="col-lg-6">
+                    <transport-table
+                        :transport_types="transport_types"
+                        @set_transport_type="set_transport_type"
+                    />
                 </div>
                 <div class="col-lg-6">
-                    <cart-table :my_cart="my_cart" @remove_from_cart="remove_from_cart"></cart-table>
+                    <cart-table
+                        :my_cart="my_cart"
+                        :is_purchasing="is_purchasing"
+                        @remove_from_cart="remove_from_cart"
+                        @call_purchase="begin_purchase"
+                        @call_clear_cart="clear_cart"
+                        @call_cancel_purchase="cancel_purchase"
+                        @call_finish_purchase="finish_purchase"
+                    />
+                </div>
+            </div>
+            <div v-if="!is_showing_main" class="row">
+                <div class="col-lg-8">
+                        <summary-table
+                            :buyed_items="buyed_items"
+                            :cart_price="cart_price"
+                            :transport_price="transport_price"
+                            :total_price="total_price"
+                            :your_cash="your_cash"
+                            @show_main="show_main"
+                        />
                 </div>
             </div>
         </div>
@@ -44,6 +72,8 @@
 
     <script src="public/vue-components/product-table.js"></script>
     <script src="public/vue-components/cart-table.js"></script>
+    <script src="public/vue-components/transport-table.js"></script>
+    <script src="public/vue-components/summary-table.js"></script>
 
     <script>
         var app = new Vue({
@@ -51,7 +81,18 @@
             data: function () {
                 return {
                     products: [],
-                    my_cart: []
+                    my_cart: [],
+                    transport_types: [],
+                    is_purchasing: false,
+                    is_showing_main: true,
+                    selected_transport_type: null,
+                    // Purchase info, by default empty to not cause any error
+                    buyed_items: [],
+                    cart_price: 0,
+                    transport_price: 0,
+                    total_price: 0,
+                    your_cash: 0,
+                    username: ''
                 }
             },
             methods: {
@@ -105,17 +146,77 @@
                         }
                     )
                 },
-                logout () {
+                logout: function () {
                     // Call to the global logout within 'this' instance
                     logout()
+                },
+                begin_purchase: function () {
+                    let this_2 = this
+                    $.get('controller/purchase.php?option=list_transport_types', function (res) {
+                        if ( is_response_error(res) )
+                            return;
+                        this_2.transport_types = res.data
+                        this_2.is_purchasing = true
+                    })
+                },
+                set_transport_type: function (selected_transport_type) {
+                    this.selected_transport_type = selected_transport_type
+                },
+                cancel_purchase: function () {
+                    this.is_purchasing = false
+                    this.selected_transport_type = null
+                },
+                clear_cart: function () {
+                    let this_2 = this
+                    $.get('controller/cart.php?option=empty', function (res) {
+                        if ( is_response_error(res) )
+                            return;
+                        alert(res.message)
+                        if ( res.data == true )
+                            this_2.my_cart = []
+                    })
+                },
+                finish_purchase: function () {
+                    this_2 = this
+                    if (this.selected_transport_type == null) {
+                        alert ('Please select a transport type before')
+                        return
+                    }
+                    if (this.my_cart.length < 1) {
+                        alert ('Nothing to buy. Your cart is empty')
+                        return
+                    }
+                    $.post(
+                        'controller/purchase.php?option=purchase',
+                        { transport_type_id: this_2.selected_transport_type },
+                        function (res) {
+                            if ( is_response_error(res) )
+                                return;
+                            alert(res.message)
+                            this_2.buyed_items = res.data.buyed_items
+                            this_2.cart_price = res.data.cart_price
+                            this_2.transport_price = res.data.transport_price
+                            this_2.total_price = res.data.total_price
+                            this_2.your_cash = res.data.your_cash
+                            localStorage.setItem('cash', res.data.your_cash)
+                            this_2.is_showing_main = false
+                            this_2.my_cart = []
+                            this_2.is_purchasing = false
+                        }
+                    )
+                },
+                show_main(is_showing_main) {
+                    this.is_showing_main = is_showing_main
                 }
+
             },
             created: function () {
                 this.get_products()
                 this.get_user_cart()
+                this.your_cash = localStorage.getItem('cash')
+                this.username = localStorage.getItem('username')
             } 
         })
     </script>
-    
 </body>
 </html>

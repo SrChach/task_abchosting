@@ -23,26 +23,6 @@ switch ($_GET['option']) {
 		Message::successful_operation($user);
 		break;
 
-	case 'rest_cash':
-		if ( !isset($_SESSION['user_id']) )
-			Message::error_message('Session not started', 1);
-
-		if ( !isset($_POST['quantity']) )
-			Message::error_message('Quantity to rest is required');
-
-		$user = new User($_SESSION['user_id']);
-
-		$status = $user->extract_cash($_POST['quantity']);
-
-		if ($status == false)
-			Message::error_message('Something went wrong. Cannot extract the cash from user');
-
-		Message::successful_operation([
-			'status' => true,
-			'updated_cash' => $user->cash
-		]);
-		break;
-
 	case 'logout':
 		if ( !isset($_SESSION['user_id']) )
 			Message::error_message("Session doesn't exist", 1);

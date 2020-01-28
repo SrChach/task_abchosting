@@ -29,7 +29,7 @@
 
 			$purchase = new Purchase();
 			$transport_types = $purchase->purchase($_SESSION['user_id'], $_POST['transport_type_id']);
-			Message::successful_operation($transport_types);
+			Message::successful_operation($transport_types, 'Purchase completed successful');
 			break;
 
 		default:
