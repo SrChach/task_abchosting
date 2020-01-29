@@ -43,6 +43,23 @@ class Product {
         return true;
     }
 
+    public function rate_list ($user_id) {
+        global $_conn;
+        
+        $products = $_conn->fetchAll("SELECT product.*, rate.rate FROM
+                product
+            LEFT JOIN
+                rate
+            ON product.id = rate.product_id
+            WHERE product.id IN (
+                SELECT product_id FROM cart WHERE user_id=? AND purchase_id IS NOT NULL
+            )
+        ", [$user_id]
+        );
+
+        return $products;
+    }
+
     public function rate ($user_id, $product_id, $rate){
         global $_conn;
 

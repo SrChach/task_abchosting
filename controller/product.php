@@ -20,6 +20,15 @@
             Message::successful_operation($products);
             break;
 
+        case 'rate_list':
+            if( !isset($_SESSION['user_id']) )
+                Message::error_message('Session not started', 1);
+            
+            $product = new Product();
+            $rated_products_data = $product->rate_list($_SESSION['user_id']);
+            Message::successful_operation($rated_products_data);
+            break;
+
         case 'rate':
             if( !isset($_SESSION['user_id']) )
                 Message::error_message('Session not started', 1);
