@@ -9,7 +9,7 @@ Vue.component('product-table', {
     template: `
         <div class='card mt-2 mb-4'>
             <div class="card-header text-center">
-                <h5>Products</h5>
+                <h5>Products - {{ (is_rating) ? 'Rate' : 'List' }}</h5>
             </div>
             <div class='card-body pt-4 table-responsive'>
                 <table class='table'>
@@ -51,12 +51,13 @@ Vue.component('product-table', {
                                 </div>
                             </td>
                             <td v-if="is_rating">
-                                <div class="input-group">
-                                    <input class="form-control" placeholder="Your rate" type="number" min="0" max="999">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-warning">Rate this product!</button>
+                                <div v-if="product.rate == null" class="input-group">
+                                    <input class="form-control" placeholder="Your rate" type="number" min="0" max="999" v-model.number="product.new_rate">
+                                    <div class="input-group-append" @click="rate_product(id)">
+                                        <button class="btn btn-outline-warning">Rate me!</button>
                                     </div>
                                 </div>
+                                <div v-if="product.rate != null">Your rating: {{ product.rate }}/5</div>
                             </td>
                         </tr>
                         <tr v-if="products.length == 0">
@@ -82,6 +83,21 @@ Vue.component('product-table', {
                 quantity: selected.to_cart
             });
             this.products[id].to_cart = 0
+        },
+        rate_product: function (id) {
+            let selected = this.products[id]
+            if (typeof (selected.new_rate) != 'number') {
+                alert('please put a value from 0 to 5')
+                return;
+            }
+            if (selected.new_rate < 1 || selected.new_rate > 5) {
+                alert('Please select a number from 0 to 5')
+                return;
+            }
+            this.$emit('rate_product', {
+                product_id: selected.id,
+                rate: selected.new_rate
+            })
         },
         show_rate: function (is_rating) {
             this.$emit('show_rate', is_rating)

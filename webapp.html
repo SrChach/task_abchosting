@@ -19,8 +19,7 @@
             </button>
             <div class="collapse navbar-collapse" id="main_navbar">
                 <div class="navbar-nav">
-                    <span class="nav-item nav-link">User {{ username }}, you have: ${{ your_cash }}</span>
-                    <a href="#" class="nav-item nav-link">Rate products</a>
+                    <span class="nav-item nav-link">User {{ username }}, you have: ${{ parseFloat(your_cash).toFixed(2) }}</span>
                     <a href="#" class="nav-item nav-link" @click="logout()">Logout</a>
                 </div>
             </div>
@@ -34,6 +33,7 @@
                         :is_rating="is_rating"
                         @add_to_cart="add_to_cart"
                         @show_rate="show_rate"
+                        @rate_product="rate_product"
                     />
                 </div>
                 <div v-if="is_purchasing" class="col-lg-6">
@@ -127,6 +127,18 @@
                     else
                         this.showing_products = this.products_to_rate
                     this.is_rating = is_rating
+                },
+                rate_product: function (product_to_rate) {
+                    let this_2 = this
+                    $.post('controller/product.php?option=rate', product_to_rate, function (res) {
+                        if (is_response_error(res))
+                            return;
+                        if (res.data == true) {
+                            alert(res.message)
+                            this_2.get_products()
+                            this_2.get_rate_list()
+                        }
+                    })
                 },
                 get_user_cart: function () {
                     let this_2 = this
@@ -226,6 +238,8 @@
                             this_2.is_showing_main = false
                             this_2.my_cart = []
                             this_2.is_purchasing = false
+                            this_2.get_products()
+                            this_2.get_rate_list()
                         }
                     )
                 },
