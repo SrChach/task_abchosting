@@ -113,12 +113,14 @@
                             this_2.showing_products = res.data
                     })
                 },
-                get_rate_list: function () {
+                get_rate_list: function (show_rate = false) {
                     this_2 = this
                     $.get('controller/product.php?option=rate_list', function (res) {
                         if (is_response_error(res))
                             return;
                         this_2.products_to_rate = res.data
+                        if (show_rate)
+                            this_2.showing_products = res.data
                     })
                 },
                 show_rate: function (is_rating) {
@@ -135,8 +137,8 @@
                             return;
                         if (res.data == true) {
                             alert(res.message)
-                            this_2.get_products()
-                            this_2.get_rate_list()
+                            this_2.get_products(false)
+                            this_2.get_rate_list(true)
                         }
                     })
                 },
@@ -239,6 +241,7 @@
                             this_2.my_cart = []
                             this_2.is_purchasing = false
                             this_2.get_products()
+                            this_2.show_rate(false)
                             this_2.get_rate_list()
                         }
                     )

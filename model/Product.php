@@ -46,15 +46,28 @@ class Product {
     public function rate_list ($user_id) {
         global $_conn;
         
-        $products = $_conn->fetchAll("SELECT product.*, rate.rate FROM
-                product
-            LEFT JOIN
-                rate
-            ON product.id = rate.product_id
-            WHERE product.id IN (
-                SELECT product_id FROM cart WHERE user_id=? AND purchase_id IS NOT NULL
-            )
-        ", [$user_id]
+        $products = $_conn->fetchAll("SELECT product.*, rate.rate
+                    FROM
+                        product
+                    JOIN
+                        rate ON product.id = rate.product_id
+                    WHERE
+                        product.id IN (
+                            SELECT product_id FROM cart WHERE user_id=? AND purchase_id IS NOT NULL
+                        )
+                        AND rate.user_id=?
+            UNION
+                SELECT product.*, NULL AS rate
+                    FROM product
+                    WHERE
+                        id IN (
+                            SELECT product_id FROM cart WHERE user_id=? AND purchase_id IS NOT NULL
+                        )
+                        AND
+                        id NOT IN (
+                            SELECT product_id FROM rate WHERE user_id =?
+                        )
+        ", [$user_id, $user_id, $user_id, $user_id]
         );
 
         return $products;
