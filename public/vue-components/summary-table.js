@@ -47,12 +47,25 @@ Vue.component('summary-table', {
                 </table>
             </div>
             <div class="card-footer text-center">
-                <button v-if="is_prefinal_buy" class="btn btn-block btn-warning" @click="call_finish_purchase">
-                    Finish buying
-                </button>
-                <button v-if="!is_prefinal_buy" class="btn btn-block btn-info" @click="show_main">
-                    Done! Return to buy
-                </button>
+                <div  v-if="is_prefinal_buy" class="row">
+                    <div class="col-sm-6">
+                        <button class="btn btn-block btn-danger" @click="call_cancel_purchase">
+                            Cancel
+                        </button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button class="btn btn-block btn-warning" @click="call_finish_purchase">
+                            Finish buying
+                        </button>
+                    </div>
+                </div>
+                <div class="row" v-if="!is_prefinal_buy">
+                    <div class="col-12">
+                        <button class="btn btn-block btn-info" @click="show_main">
+                            Done! Return to buy
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     `,
@@ -60,9 +73,11 @@ Vue.component('summary-table', {
         show_main: function () {
             this.$emit('show_main', true);
         },
+        call_cancel_purchase: function () {
+            this.$emit('call_cancel_purchase');
+        },
         call_finish_purchase: function () {
             this.$emit('call_finish_purchase', false);
-        },
-        
+        }
     }
 })

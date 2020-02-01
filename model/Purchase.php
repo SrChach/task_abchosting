@@ -76,7 +76,7 @@ class Purchase {
 			return [
 				'buyed_items' => $cart_list,
 				'cart_price' => $cart_price,
-				'transport_type' => $transport_type['price'],
+				'transport_price' => $transport_type['price'],
 				'total_price' => $total_price,
 				'user_cash' => $user->cash
 			];

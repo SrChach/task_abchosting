@@ -63,6 +63,7 @@
                         :transport_price="transport_price"
                         :total_price="total_price"
                         :your_cash="your_cash"
+                        @call_cancel_purchase="cancel_purchase"
                         @call_finish_purchase="finish_purchase"
                         @show_main="show_main"
                     />
@@ -206,6 +207,11 @@
                 cancel_purchase: function () {
                     this.is_purchasing = false
                     this.selected_transport_type = null
+                    this.buyed_items = []
+                    this.cart_price = 0
+                    this.transport_price = 0
+                    this.total_price = 0
+                    this.is_showing_main = true
                 },
                 clear_cart: function () {
                     let this_2 = this
@@ -235,7 +241,6 @@
                         function (res) {
                             if (is_response_error(res))
                                 return;
-                            alert(res.message)
                             this_2.is_prefinal_buy = true
                             this_2.buyed_items = res.data.buyed_items
                             this_2.cart_price = res.data.cart_price
@@ -247,6 +252,7 @@
                             if (is_only_showing)
                                 return;
 
+                            alert(res.message)
                             this_2.is_prefinal_buy = false
                             this_2.your_cash = res.data.your_cash
                             localStorage.setItem('cash', res.data.your_cash)

@@ -57,7 +57,7 @@ Vue.component('cart-table', {
                 </table>
             </div>
             <div v-if="is_purchasing" class="card-footer">
-                <button class="btn btn-block btn-warning" @click="call_finish_purchase()">Finish purchase</button>
+                <button class="btn btn-block btn-warning" @click="call_finish_purchase()">See your final cart</button>
             </div>
         </div>
     `,
