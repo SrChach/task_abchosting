@@ -57,11 +57,13 @@
             <div v-if="!is_showing_main" class="row">
                 <div class="col-lg-8">
                     <summary-table
+                        :is_prefinal_buy="is_prefinal_buy"
                         :buyed_items="buyed_items"
                         :cart_price="cart_price"
                         :transport_price="transport_price"
                         :total_price="total_price"
                         :your_cash="your_cash"
+                        @call_finish_purchase="finish_purchase"
                         @show_main="show_main"
                     />
                 </div>
@@ -94,6 +96,7 @@
                     is_rating: false,
                     selected_transport_type: null,
                     // Purchase info, by default empty to not cause any error
+                    is_prefinal_buy: true,
                     buyed_items: [],
                     cart_price: 0,
                     transport_price: 0,
@@ -214,7 +217,7 @@
                             this_2.my_cart = []
                     })
                 },
-                finish_purchase: function () {
+                finish_purchase: function (is_only_showing = true) {
                     this_2 = this
                     if (this.selected_transport_type == null) {
                         alert('Please select a transport type before')
@@ -224,22 +227,30 @@
                         alert('Nothing to buy. Your cart is empty')
                         return
                     }
+
+                    let showing_url_parameters = (is_only_showing) ? '&is_only_showing' : '';
                     $.post(
-                        'controller/purchase.php?option=purchase',
+                        `controller/purchase.php?option=purchase${ showing_url_parameters }`,
                         { transport_type_id: this_2.selected_transport_type },
                         function (res) {
                             if (is_response_error(res))
                                 return;
                             alert(res.message)
+                            this_2.is_prefinal_buy = true
                             this_2.buyed_items = res.data.buyed_items
                             this_2.cart_price = res.data.cart_price
                             this_2.transport_price = res.data.transport_price
                             this_2.total_price = res.data.total_price
+                            this_2.is_showing_main = false
+                            this_2.is_purchasing = false
+
+                            if (is_only_showing)
+                                return;
+
+                            this_2.is_prefinal_buy = false
                             this_2.your_cash = res.data.your_cash
                             localStorage.setItem('cash', res.data.your_cash)
-                            this_2.is_showing_main = false
                             this_2.my_cart = []
-                            this_2.is_purchasing = false
                             this_2.get_products()
                             this_2.show_rate(false)
                             this_2.get_rate_list()

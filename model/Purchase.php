@@ -45,7 +45,7 @@ class Purchase {
 		return true;
 	}
 
-	public function purchase ($user_id, $transport_type_id) {
+	public function purchase ($user_id, $transport_type_id, $is_only_showing = false) {
 		global $_conn;
 
 		$transport_type = $this->get_transport_type($transport_type_id);
@@ -72,6 +72,16 @@ class Purchase {
 			);
 		}
 
+		if ( $is_only_showing ) {
+			return [
+				'buyed_items' => $cart_list,
+				'cart_price' => $cart_price,
+				'transport_type' => $transport_type['price'],
+				'total_price' => $total_price,
+				'user_cash' => $user->cash
+			];
+		}
+
 		// Easy to hunt-down failed transactions: Inserted into 'purchase' table without any item buyed
 		$purchase_id = $this->insert_purchase($user_id, $transport_type_id);
 
@@ -81,16 +91,13 @@ class Purchase {
 
 		$this->finish_purchase($purchase_id, $user_id);
 
-		Message::successful_operation(
-			[
-				'buyed_items' => $cart_list,
-				'cart_price' => $cart_price,
-				'transport_price' => $transport_type['price'],
-				'total_price' => $total_price,
-				'your_cash' => $user->cash
-			],
-			'Thanks for your purchase'
-		);
+		return [
+			'buyed_items' => $cart_list,
+			'cart_price' => $cart_price,
+			'transport_price' => $transport_type['price'],
+			'total_price' => $total_price,
+			'your_cash' => $user->cash
+		];
 	}
 
 }

@@ -24,10 +24,16 @@
 			if ( !isset($_SESSION['user_id']) )
 				Message::error_message('Session not started', 1);
 
-			if(  !isset($_POST['transport_type_id']) )
+			if (  !isset($_POST['transport_type_id']) )
 				Message::error_message('transport type is required');
 
 			$purchase = new Purchase();
+
+			if ( isset($_GET['is_only_showing']) ){
+				$transport_types = $purchase->purchase($_SESSION['user_id'], $_POST['transport_type_id'], true);
+				Message::successful_operation($transport_types, 'This is your cart right now');
+			}
+
 			$transport_types = $purchase->purchase($_SESSION['user_id'], $_POST['transport_type_id']);
 			Message::successful_operation($transport_types, 'Purchase completed successful');
 			break;

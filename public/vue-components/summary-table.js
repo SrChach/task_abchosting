@@ -3,6 +3,7 @@
  */
 Vue.component('summary-table', {
     props: {
+        is_prefinal_buy: { type: Boolean, default: true },
         buyed_items: { type: Array, default: function () { return []; } },
         cart_price: { default: 0.00 },
         transport_price: { default: 0.00 },
@@ -12,7 +13,8 @@ Vue.component('summary-table', {
     template: `
         <div class='card mt-2 mb-4'>
             <div class="card-header text-center">
-                <h5>Summary of purchase</h5>
+                <h5 v-if="is_prefinal_buy">Are you sure?</h5>
+                <h5 v-if="!is_prefinal_buy">Summary of purchase</h5>
             </div>
             <div class='card-body pt-4 table-responsive'>
                 <table class='table'>
@@ -45,13 +47,22 @@ Vue.component('summary-table', {
                 </table>
             </div>
             <div class="card-footer text-center">
-                <button class="btn btn-block btn-info" @click="show_main">Done! Return to buy</button>
+                <button v-if="is_prefinal_buy" class="btn btn-block btn-warning" @click="call_finish_purchase">
+                    Finish buying
+                </button>
+                <button v-if="!is_prefinal_buy" class="btn btn-block btn-info" @click="show_main">
+                    Done! Return to buy
+                </button>
             </div>
         </div>
     `,
     methods: {
         show_main: function () {
             this.$emit('show_main', true);
-        }
+        },
+        call_finish_purchase: function () {
+            this.$emit('call_finish_purchase', false);
+        },
+        
     }
 })

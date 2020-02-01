@@ -88,7 +88,7 @@ Vue.component('cart-table', {
             this.$emit('call_purchase');
         },
         call_finish_purchase: function () {
-            this.$emit('call_finish_purchase')
+            this.$emit('call_finish_purchase', true)
         },
         call_cancel_purchase: function () {
             this.$emit('call_cancel_purchase')
