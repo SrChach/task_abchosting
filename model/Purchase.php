@@ -55,7 +55,7 @@ class Purchase {
 		$user = new User($user_id);
 		$cart = new Cart($user_id);
 
-		$cart_list = $cart->list();
+		$cart_list = $cart->_list();
 
 		if ( count($cart_list) == 0 )
 			Message::error_message('Nothing to buy');

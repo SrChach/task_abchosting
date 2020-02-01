@@ -15,7 +15,7 @@ class Cart {
         $this->user_id = $user_id;
     }
 
-    public function list () {
+    public function _list () {
         global $_conn;
 
         $cart = $_conn->fetchAll("SELECT cart.id AS cart_id, product.id AS product_id, product.name AS product,
@@ -86,7 +86,7 @@ class Cart {
         return $affected;
     }
 
-    public function empty () {
+    public function _empty () {
         global $_conn;
 
         if( !isset($_conn) )

@@ -19,7 +19,7 @@
     switch ($_GET['option']) {
         case 'list':
             $cart = new Cart($_SESSION['user_id']);
-            $cart_list = $cart->list();
+            $cart_list = $cart->_list();
             Message::successful_operation($cart_list);
             break;
 
@@ -48,7 +48,7 @@
 
         case 'empty':
             $cart = new Cart($_SESSION['user_id']);
-            $status = $cart->empty();
+            $status = $cart->_empty();
             if($status === false) Message::error_message('Sonething went wrong');
             if(!$status) Message::successful_operation(true, 'Nothing to clear');
             Message::successful_operation(true, 'Cart cleared');
